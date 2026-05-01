@@ -11,6 +11,14 @@ export function Jobs() {
   const [analyzingId, setAnalyzingId] = useState<string | null>(null);
   const [pitch, setPitch] = useState<string | null>(null);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [liveFreq, setLiveFreq] = useState(98.42);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveFreq(prev => +(prev + (Math.random() * 0.04 - 0.02)).toFixed(2));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const filteredJobs = MOCK_JOBS.filter(job => 
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,29 +103,42 @@ export function Jobs() {
           </div>
           <div className="text-right">
             <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">Signal Strength</p>
-            <p className="text-white font-mono text-xl tracking-tighter">98.4<span className="text-[10px] text-blue-400 font-bold ml-0.5">MHz</span></p>
+            <p className="text-white font-mono text-xl tracking-tighter">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={liveFreq}
+                  initial={{ opacity: 0.5 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {liveFreq}
+                </motion.span>
+              </AnimatePresence>
+              <span className="text-[10px] text-blue-400 font-bold ml-0.5">MHz</span>
+            </p>
           </div>
         </div>
         
         <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-              <TrendingUp size={18} />
+          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 flex items-start gap-4 group/card hover:bg-white/[0.04] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-full bg-blue-500/5 -skew-x-12 translate-x-12" />
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 overflow-hidden relative">
+              <TrendingUp size={18} className="relative z-10" />
             </div>
-            <div>
+            <div className="relative z-10">
               <p className="text-slate-500 text-[9px] font-black uppercase tracking-widest leading-none mb-1">Market Sentiment</p>
-              <p className="text-sm text-slate-200 font-medium leading-snug">"Candidate surplus in <span className="text-white font-bold">FE</span>, deficit in <span className="text-blue-400 font-bold">Cloud Infrastructure</span>."</p>
+              <p className="text-sm text-slate-200 font-medium leading-snug">"Candidate surplus in <span className="text-white font-bold">FE</span>, deficit in <span className="text-blue-400 font-bold">Cloud</span>."</p>
             </div>
           </div>
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 flex items-start gap-4">
+          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-5 flex items-start gap-4 group/card hover:bg-white/[0.04] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-full bg-emerald-500/5 -skew-x-12 translate-x-12" />
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <Zap size={18} />
             </div>
-            <div>
+            <div className="relative z-10">
               <p className="text-slate-500 text-[9px] font-black uppercase tracking-widest leading-none mb-1">AI Recommendation</p>
-              <p className="text-sm text-slate-200 font-medium leading-snug">"Focus on <span className="text-white font-bold">Vercel</span> integrations to hit <span className="text-emerald-400 font-bold">95%+ matches</span>."</p>
+              <p className="text-sm text-slate-200 font-medium leading-snug">"Focus on <span className="text-white font-bold">Vercel</span> for <span className="text-emerald-400 font-bold">95%+ matches</span>."</p>
             </div>
           </div>
         </div>

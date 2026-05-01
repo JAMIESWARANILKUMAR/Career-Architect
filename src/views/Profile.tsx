@@ -72,34 +72,41 @@ export function Profile() {
   };
 
   return (
-    <div className="p-6 space-y-8 pb-32 theme-profile">
+    <div className="p-6 space-y-8 pb-32 relative overflow-hidden">
+      {/* Background Wireframe Pattern */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+           style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+      
       <motion.header 
         variants={container}
         initial="hidden"
         animate="show"
-        className="pt-8 text-center space-y-4"
+        className="pt-12 text-center space-y-6 relative z-10"
       >
         <motion.div variants={item} className="relative inline-block group">
-          <div className="absolute -inset-4 bg-gradient-to-r from-rose-500 via-indigo-500 to-rose-500 rounded-[50px] blur-2xl opacity-20 group-hover:opacity-40 animate-pulse transition-opacity" />
-          <img 
-            src={user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.uid}`} 
-            className="relative w-28 h-28 rounded-[36px] border-2 border-white/10 shadow-2xl mx-auto object-cover ring-1 ring-white/5 transition-transform group-hover:scale-105 duration-500"
-            alt="Profile"
-          />
+          <div className="absolute -inset-6 bg-gradient-to-r from-rose-500/20 via-indigo-500/20 to-rose-500/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          <div className="relative">
+             <div className="absolute inset-0 border border-white/10 rounded-[44px] animate-pulse" />
+             <img 
+               src={user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.uid}`} 
+               className="relative w-32 h-32 rounded-[40px] border border-white/10 shadow-2xl mx-auto object-cover grayscale hover:grayscale-0 transition-all duration-700"
+               alt="Profile"
+             />
+          </div>
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 15 }}
-            className="absolute -bottom-2 -right-2 bg-rose-600 p-3 rounded-2xl border-4 border-[#030303] shadow-xl cursor-pointer"
+            className="absolute -bottom-2 -right-2 bg-rose-600 p-3 rounded-2xl border-4 border-[#09090b] shadow-xl cursor-pointer"
           >
             <Shield size={18} className="text-white" />
           </motion.div>
         </motion.div>
         
-        <motion.div variants={item} className="space-y-1 pt-2">
-          <h1 className="text-3xl font-black text-white tracking-tighter premium-gradient-text uppercase">
+        <motion.div variants={item} className="space-y-1">
+          <h1 className="text-4xl font-light text-white tracking-tighter leading-none">
             {profile?.displayName}
           </h1>
-          <p className="text-rose-400 text-[10px] font-black uppercase tracking-[0.3em]">{profile?.handle}</p>
-          <div className={`mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-full glass-card border border-rose-500/20 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg ${color}`}>
+          <p className="text-rose-500 text-[10px] font-black uppercase tracking-[0.5em]">{profile?.handle}</p>
+          <div className={`mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/[0.03] border border-white/5 text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl ${color}`}>
             {getTierIcon(tier)}
             {tierName}
           </div>
