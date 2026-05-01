@@ -1,0 +1,86 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. User Validation
+    function isValidUser(data) {
+      let requiredFields = ['uid', 'displayName', 'email', 'careerPoints', 'onboardingComplete', 'createdAt', 'handle', 'applicationsCount', 'resumeWeightage', 'dailyStreak', 'skills', 'currentRole', 'targetIndustry', 'targetRole'];
+      return data.keys().hasAll(requiredFields)
+          && data.uid == request.auth.uid
+          && (data.displayName == null || (data.displayName is string && data.displayName.size() <= 100))
+          && (data.email == null || (data.email is string && data.email.size() <= 100))
+          && data.handle is string && data.handle.size() <= 50
+          && data.careerPoints is int
+          && data.applicationsCount is int
+          && data.resumeWeightage is int
+          && data.dailyStreak is int
+          && data.skills is list
+          && data.currentRole is string
+          && data.targetIndustry is string
+          && data.targetRole is string
+          && data.onboardingComplete is bool;
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming()) && incoming().createdAt == request.time;
+      allow update: if isOwner(userId) && isValidUser(incoming()) && (
+        // Action: Complete Onboarding (Multiple fields)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['currentRole', 'targetRole', 'targetIndustry', 'onboardingComplete', 'careerPoints'])) ||
+        
+        // Action: Update Profile Metadata (Identity Matrix)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'handle', 'currentRole', 'targetRole', 'targetIndustry'])) ||
+
+        // Action: Gain Points (Incremental)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['careerPoints']) && 
+         incoming().careerPoints <= existing().careerPoints + 1000) ||
+
+        // Action: Apply for Job (Increment count & Award points)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['applicationsCount', 'careerPoints']) &&
+         incoming().applicationsCount <= existing().applicationsCount + 1 &&
+         incoming().careerPoints <= existing().careerPoints + 100) ||
+
+        // Action: Update Stats
+        (incoming().diff(existing()).affectedKeys().hasOnly(['resumeWeightage', 'dailyStreak', 'skills', 'applicationsCount', 'careerPoints']))
+      );
+
+      // Subcollections
+      match /resumes/{resumeId} {
+        allow list, get: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidId(resumeId);
+      }
+
+      match /quizzes/{quizId} {
+        allow list, get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(quizId);
+      }
+    }
+  }
+}

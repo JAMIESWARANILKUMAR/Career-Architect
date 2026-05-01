@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Basic user information and career goals",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "handle": { "type": "string" },
+        "email": { "type": "string" },
+        "currentRole": { "type": "string" },
+        "targetIndustry": { "type": "string" },
+        "targetRole": { "type": "string" },
+        "careerPoints": { "type": "integer" },
+        "applicationsCount": { "type": "integer" },
+        "resumeWeightage": { "type": "integer" },
+        "dailyStreak": { "type": "integer" },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "onboardingComplete": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "email", "handle"]
+    },
+    "Resume": {
+      "title": "Resume Data",
+      "description": "Structured resume data derived from raw input or chat",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "sections": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "rawText": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Quiz": {
+      "title": "Daily Quiz",
+      "description": "Generative daily quiz for career points",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" } },
+        "correctAnswer": { "type": "integer" },
+        "completed": { "type": "boolean" },
+        "score": { "type": "integer" }
+      }
+    },
+    "JobListing": {
+      "title": "Job Listing",
+      "description": "Aggregated job data with match scores",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "company": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "url": { "type": "string" },
+        "matchScore": { "type": "integer" },
+        "matchReason": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/users/{userId}/resumes/{resumeId}": {
+      "schema": "Resume",
+      "description": "User resume versions"
+    },
+    "/users/{userId}/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "User quiz history"
+    }
+  }
+}

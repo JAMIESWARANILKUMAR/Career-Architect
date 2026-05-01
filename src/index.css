@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6366f1;
+  --color-secondary: #10b981;
+  --color-surface: #030303;
+  --color-on-surface: #f8fafc;
+  --color-surface-card: rgba(255, 255, 255, 0.03);
+  --color-surface-border: rgba(255, 255, 255, 0.08);
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans antialiased selection:bg-primary/30;
+  }
+}
+
+.glass-card {
+  @apply bg-surface-card backdrop-blur-2xl border border-surface-border rounded-[32px] p-6 transition-all duration-500 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)];
+}
+
+.glass-morphism {
+  @apply bg-clip-padding backdrop-filter backdrop-blur-3xl bg-white/10 border border-white/10;
+}
+
+.premium-gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/40;
+}
+
+/* Section Themes */
+.theme-dashboard { --section-accent: #6366f1; --section-glow: rgba(99, 102, 241, 0.15); }
+.theme-learn { --section-accent: #10b981; --section-glow: rgba(16, 185, 129, 0.15); }
+.theme-jobs { --section-accent: #3b82f6; --section-glow: rgba(59, 130, 246, 0.15); }
+.theme-tools { --section-accent: #f59e0b; --section-glow: rgba(245, 158, 11, 0.15); }
+.theme-profile { --section-accent: #f43f5e; --section-glow: rgba(244, 63, 94, 0.15); }
+
+.m3-button-filled {
+  @apply bg-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
